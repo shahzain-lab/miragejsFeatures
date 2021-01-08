@@ -2,6 +2,9 @@ import { User } from "../../../interfaces/User.interface";
 import { Diary } from "../../../interfaces/Diary.interface";
 import { handleErrors } from "../Server";
 import { Entry } from "../../../interfaces/Entry.interface";
+import dayjs from 'dayjs';
+import { Request,Response } from 'miragejs';
+
 
 export const create = (
     schema: any,
@@ -74,7 +77,37 @@ export const addEntry = (
             updatedAt: now
         });
         return {
-            
-        }
+            diary: diary.attrs,
+            entry: entry.attrs,
+        };
+    }catch(error){
+        return handleErrors(error, 'Failed to save entry')
+    }
+};
+
+export const getEntries = (
+    schema: any,
+    req: Request
+):{entries: Entry[]} | Response => {
+    try{
+        const diary = schema.diaries.find(req.params.id);
+        return diary.entry;
+    }catch (error){
+        return handleErrors(error, "Failed to get entries")
+    }
+};
+
+export const updateEntry = (schema: any, req: Request):Entry | Response => {
+    try{
+        const entry = schema.entries.find(req.params.id);
+        const data = JSON.parse(req.requestBody) as Partial<Entry>;
+        const now = dayjs().format();
+        entry.update({
+            ...data,
+            updatedAt: now,
+        });
+        return entry.attrs as Entry;
+    }catch (error){
+        return handleErrors(error, "Failed to update entry")
     }
 }
