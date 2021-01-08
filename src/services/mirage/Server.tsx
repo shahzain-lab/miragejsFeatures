@@ -1,4 +1,6 @@
 import { Server, Model, Factory, belongsTo, hasMany, Response } from 'miragejs';
+import user from './Routes/user';
+import * as diary from './Routes/diary';
 
 
 ///handleErrors response, if any problem while communicating with server
@@ -46,6 +48,18 @@ export const setUpServer = (env?: string): Server => {
         ///routes for communicating with network requests
         routes():void {
             this.urlPrefix = 'https://diaries.app';
+
+            this.get('/diaries/entries/:id', diary.getEntries);
+            this.get('/diaries/:id', diary.getDiaries);
+
+            this.post('/auth/login', user.login);
+            this.post('/auth/signup', user.signup);
+
+            this.post('/diaries/',diary.create);
+            this.post('/diaries/entry/:id',diary.addEntry);
+
+            this.put('/diaries/entry/:id', diary.updateEntry)
+            this.put('/diaries/:id', diary.updateDiary);
         },
     });
 };

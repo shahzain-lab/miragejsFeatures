@@ -10,6 +10,7 @@ export const create = (
     schema: any,
     req: Request
 ): { user:User; diary: Diary} | Response => {
+    //// to save a new diary and associate it to a user account
     try{
         const {title, type, userId} = JSON.parse(req.requestBody) as Partial<Diary>;
         const exUser = schema.users.findBy({id: userId});
@@ -34,6 +35,8 @@ export const create = (
     }
 }
 
+
+///updated dairies
 export const updateDiary = (schema: any, req: Request): Diary | Response => {
     try{
         const diary = schema.diaries.find( req.params.id );
